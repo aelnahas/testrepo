@@ -1,0 +1,67 @@
+# This config was automatically generated from your source code
+# Stacks detected: artifact:go-executable:,deps:go:.
+version: 2.1
+jobs:
+  test-go:
+    # Install go modules and run tests
+    docker:
+      - image: cimg/go:1.20
+    steps:
+      - checkout
+      - restore_cache:
+          key: go-mod-{{ checksum "go.sum" }}
+      - run:
+          name: Download Go modules
+          command: "|\n    go mod download \n    if [$? -ne 0]; then \n\techo \" EOF go mod download will fail if you have private repositories \n\t    One way to fix this for private go modules that are in github:\n              1. Execute: go env -w GOPRIVATE=github.com.com/<OrgNameHere>/*\n              2. Add: GITHUB_TOKEN and GITHUB_USER to an org context\n\t      3. Set the jobs to use the context that includes github token and user  \n\t      4. Execute: git config --global url.\"https://$GITHUB_USER:$GITHUB_TOKEN@github.com/<OrgNameHere>/\".insteadOf \"https://github.com/<OrgNameHere>/\"\n\n\t    For gitlab private go modules follow the same instructions as above but swap github url and tokens with gitlab.\"\t\n    end\n"
+      - save_cache:
+          key: go-mod-{{ checksum "go.sum" }}
+          paths:
+            - /home/circleci/go/pkg/mod
+      - run:
+          name: Run tests
+          command: gotestsum --junitfile junit.xml
+      - store_test_results:
+          path: junit.xml
+  build-go-executables:
+    # Build go executables and store them as artifacts
+    docker:
+      - image: cimg/go:1.20
+    steps:
+      - checkout
+      - restore_cache:
+          key: go-mod-{{ checksum "go.sum" }}
+      - run:
+          name: Download Go modules
+          command: "|\n    go mod download \n    if [$? -ne 0]; then \n\techo \" EOF go mod download will fail if you have private repositories \n\t    One way to fix this for private go modules that are in github:\n              1. Execute: go env -w GOPRIVATE=github.com.com/<OrgNameHere>/*\n              2. Add: GITHUB_TOKEN and GITHUB_USER to an org context\n\t      3. Set the jobs to use the context that includes github token and user  \n\t      4. Execute: git config --global url.\"https://$GITHUB_USER:$GITHUB_TOKEN@github.com/<OrgNameHere>/\".insteadOf \"https://github.com/<OrgNameHere>/\"\n\n\t    For gitlab private go modules follow the same instructions as above but swap github url and tokens with gitlab.\"\t\n    end\n"
+      - save_cache:
+          key: go-mod-{{ checksum "go.sum" }}
+          paths:
+            - /home/circleci/go/pkg/mod
+      - run:
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      - run:
+          name: Build executables
+          command: go build -o ~/artifacts ./...
+      - store_artifacts:
+          path: ~/artifacts
+          destination: executables
+  deploy:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: deploy
+          command: '#e.g. ./deploy.sh'
+workflows:
+  build-and-test:
+    jobs:
+      - test-go
+      - build-go-executables:
+          requires:
+            - test-go
+    # - deploy:
+    #     requires:
+    #       - build-go-executables
