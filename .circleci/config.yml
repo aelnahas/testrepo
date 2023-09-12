@@ -15,7 +15,7 @@ jobs:
           command: go mod download
       - run:
           name: Print go mod help instructions
-          command: "\n\techo \" EOF go mod download will fail if you have private repositories \n\t    One way to fix this for private go modules that are in github:\n              1. Execute: go env -w GOPRIVATE=github.com.com/<OrgNameHere>/*\n              2. Add: GITHUB_TOKEN and GITHUB_USER to an org context\n\t      3. Set the jobs to use the context that includes github token and user  \n\t      4. Execute: git config --global url.\"https://$GITHUB_USER:$GITHUB_TOKEN@github.com/<OrgNameHere>/\".insteadOf \"https://github.com/<OrgNameHere>/\"\n\n\t    For gitlab private go modules follow the same instructions as above but swap github url and tokens with gitlab.\"\t\n"
+          command: "\n\techo \" EOF go mod download will fail if you have private repositories \n\t    One way to fix this for private go modules that are in github:\n              1. Execute: go env -w GOPRIVATE=github.com.com/<OrgNameHere>/*\n              2. Add: GITHUB_TOKEN and GITHUB_USER to an org context\n\t      3. Set the jobs to use the context that includes github token and user  \n\t      4. Execute: git config --global url.\\\"https://$GITHUB_USER:$GITHUB_TOKEN@github.com/<OrgNameHere>/\\\".insteadOf \\\"https://github.com/<OrgNameHere>/\\\"\n\n\t    For gitlab private go modules follow the same instructions as above but swap github url and tokens with gitlab.\"\t\n"
           when: on_fail
       - save_cache:
           key: go-mod-{{ checksum "go.sum" }}
@@ -39,7 +39,7 @@ jobs:
           command: go mod download
       - run:
           name: Print go mod help instructions
-          command: "\n\techo \" EOF go mod download will fail if you have private repositories \n\t    One way to fix this for private go modules that are in github:\n              1. Execute: go env -w GOPRIVATE=github.com.com/<OrgNameHere>/*\n              2. Add: GITHUB_TOKEN and GITHUB_USER to an org context\n\t      3. Set the jobs to use the context that includes github token and user  \n\t      4. Execute: git config --global url.\"https://$GITHUB_USER:$GITHUB_TOKEN@github.com/<OrgNameHere>/\".insteadOf \"https://github.com/<OrgNameHere>/\"\n\n\t    For gitlab private go modules follow the same instructions as above but swap github url and tokens with gitlab.\"\t\n"
+          command: "\n\techo \" EOF go mod download will fail if you have private repositories \n\t    One way to fix this for private go modules that are in github:\n              1. Execute: go env -w GOPRIVATE=github.com.com/<OrgNameHere>/*\n              2. Add: GITHUB_TOKEN and GITHUB_USER to an org context\n\t      3. Set the jobs to use the context that includes github token and user  \n\t      4. Execute: git config --global url.\\\"https://$GITHUB_USER:$GITHUB_TOKEN@github.com/<OrgNameHere>/\\\".insteadOf \\\"https://github.com/<OrgNameHere>/\\\"\n\n\t    For gitlab private go modules follow the same instructions as above but swap github url and tokens with gitlab.\"\t\n"
           when: on_fail
       - save_cache:
           key: go-mod-{{ checksum "go.sum" }}
